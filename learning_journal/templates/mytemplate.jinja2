@@ -11,7 +11,9 @@
     <title>Alchemy Scaffold for The Pyramid Web Framework</title>
 
     <!-- Bootstrap core CSS -->
+    <!--
     <link href="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    -->
 
     <!-- Custom styles for this scaffold -->
     <link href="{{ request.static_url('learning_journal:static/theme.css') }}" rel="stylesheet">
@@ -32,10 +34,7 @@
             <img class="logo img-responsive" src="{{ request.static_url('learning_journal:static/pyramid.png') }}" alt="pyramid web framework">
           </div>
           <div class="col-md-10">
-            <div class="content">
-              <h1><span class="font-semi-bold">Pyramid</span> <span class="smaller">Alchemy scaffold</span></h1>
-              <p class="lead">Welcome to <span class="font-normal">{{ project }}</span>, an&nbsp;application generated&nbsp;by<br>the <span class="font-normal">Pyramid Web Framework 1.6</span>.</p>
-            </div>
+            <div id="content" class="content"></div>
           </div>
         </div>
         <div class="row">
@@ -61,7 +60,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="//oss.maxcdn.com/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="{{ request.static_url('learning_journal:static/js/vendor.min.js') }}"></script>
+    <script src="{{ request.static_url('learning_journal:static/js/lj.js') }}"></script>
   </body>
 </html>
