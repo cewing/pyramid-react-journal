@@ -70,3 +70,7 @@ target/
 
 # db
 *.sqlite
+
+# js shit
+node_modules/
+.sass-cache
