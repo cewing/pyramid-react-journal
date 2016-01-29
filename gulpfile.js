@@ -1,5 +1,5 @@
 var gulp             = require('gulp'),
-    compass          = require('gulp-compass'),
+    sass          = require('gulp-sass'),
     notify           = require('gulp-notify'),
     plumber          = require('gulp-plumber'),
     browserify       = require('browserify'),
@@ -99,16 +99,14 @@ gulp.task('bootstrap', ['bstrapcss', 'bstrapfonts']);
 gulp.task('styles', function() {
     return gulp.src(['./app_source/sass/*.scss'])
         .pipe(plumber(plumberErrorHandler))
-        .pipe(compass({
-            sass: './app_source/sass'
-        }))
+        .pipe(sass({outputStyle: 'compact'}))
         .pipe(gulp.dest('learning_journal/static/css'))
         .pipe(notify({title: 'Gulp', icon: notifyInfo.icon, message: 'Built CSS'}));
 });
 
 //watch and rebuild
 gulp.task('watch', ['vendor', 'bootstrap', 'styles'], function() {
-    gulp.watch('./app_source/static/scss/**/*.scss', ['styles']);
+    gulp.watch('./app_source/sass/*.scss', ['styles']);
 
     var watcher = watchify(app_bundler());
     watcher.on('update', function() { app_bundle_pipeline(watcher); }); // when any file updates
