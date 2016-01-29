@@ -64,3 +64,9 @@ target/
 
 # pyenv
 .python-version
+
+# sublime
+*.sublime-project
+
+# db
+*.sqlite
