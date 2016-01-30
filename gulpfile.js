@@ -35,7 +35,8 @@ var deps = [
     'jquery',
     'lodash',
     'react',
-    'react-dom'
+    'react-dom',
+    'react-lorem-component'
 ];
 
 var app_bundler = function() {

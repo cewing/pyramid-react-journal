@@ -26,6 +26,7 @@
     "gulp-sass": "^2.1.1",
     "gulp-uglify": "^1.5.1",
     "path": "^0.12.7",
+    "react-lorem-component": "^0.10.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
