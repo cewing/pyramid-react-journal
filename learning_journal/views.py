@@ -1,36 +1,47 @@
-from pyramid.response import Response
+from __future__ import unicode_literals
+from pyramid.httpexceptions import HTTPFound
+from pyramid.security import remember, forget
 from pyramid.view import view_config
-
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from .models import (
     DBSession,
-    MyModel,
+    User
     )
 
 
 @view_config(route_name='home', renderer='templates/mytemplate.jinja2')
 def my_view(request):
-    try:
-        one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
-    except DBAPIError:
-        return Response(conn_err_msg, content_type='text/plain', status_int=500)
+    one = 'one'
     return {'one': one, 'project': 'learning_journal'}
 
 
-conn_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
+@view_config(
+    context='velruse.AuthenticationComplete',
+    renderer='json'
+)
+def login_complete_view(context, request):
+    profile = context.profile
+    display_name = profile['displayName']
+    username = profile['preferredUsername']
+    try:
+        user = User.by_username(username)
+    except NoResultFound:
+        user = User.create(display_name, username)
+    except MultipleResultsFound:
+        user = None
 
-1.  You may need to run the "initialize_learning_journal_db" script
-    to initialize your database tables.  Check your virtual
-    environment's "bin" directory for this script and try to run it.
+    if user:
+        request.session['user'] = user.__json__()
+        headers = remember(request, user.username)
+    else:
+        request.session.flash('Unable to identify a unique registered user')
+        headers = forget(request)
 
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
+    return HTTPFound(request.route_url('home'), headers=headers)
 
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
 
+@view_config(route_name='logout')
+def logout_view(request):
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)
