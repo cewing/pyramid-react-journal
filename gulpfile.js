@@ -32,6 +32,7 @@ var config = {
 }
 
 var deps = [
+    'jquery',
     'lodash',
     'react',
     'react-dom',
