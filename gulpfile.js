@@ -1,5 +1,5 @@
 var gulp             = require('gulp'),
-    sass          = require('gulp-sass'),
+    sass             = require('gulp-sass'),
     notify           = require('gulp-notify'),
     plumber          = require('gulp-plumber'),
     browserify       = require('browserify'),
@@ -32,7 +32,6 @@ var config = {
 }
 
 var deps = [
-    'jquery',
     'lodash',
     'react',
     'react-dom',
@@ -82,20 +81,6 @@ gulp.task('scripts', function() {
     return app_bundle_pipeline(app_bundler());
 });
 
-gulp.task('bstrapcss', function() {
-    return gulp.src(config.bootstrapDir + '/dist/css/bootstrap*.min.css')
-        .pipe(gulp.dest('./learning_journal/static/css/'))
-        .pipe(notify({title: 'Gulp', icon: notifyInfo.icon, message: 'Copied boostrap css'}));
-});
-
-gulp.task('bstrapfonts', function() {
-    return gulp.src(config.bootstrapDir + '/dist/fonts/*.*')
-        .pipe(gulp.dest('./learning_journal/static/fonts/'))
-        .pipe(notify({title: 'Gulp', icon: notifyInfo.icon, message: 'Copied boostrap fonts'}));
-});
-
-gulp.task('bootstrap', ['bstrapcss', 'bstrapfonts']);
-
 //styles
 gulp.task('styles', function() {
     return gulp.src(['./app_source/sass/*.scss'])
@@ -106,7 +91,7 @@ gulp.task('styles', function() {
 });
 
 //watch and rebuild
-gulp.task('watch', ['vendor', 'bootstrap', 'styles'], function() {
+gulp.task('watch', ['vendor', 'scripts', 'styles'], function() {
     gulp.watch('./app_source/sass/*.scss', ['styles']);
 
     var watcher = watchify(app_bundler());
@@ -114,4 +99,4 @@ gulp.task('watch', ['vendor', 'bootstrap', 'styles'], function() {
     return app_bundle_pipeline(watcher); // do initial bundle when the task starts
 });
 
-gulp.task('default', ['vendor', 'bootstrap', 'scripts', 'styles']);
+gulp.task('default', ['vendor', 'scripts', 'styles']);

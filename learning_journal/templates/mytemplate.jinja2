@@ -10,7 +10,11 @@
 
     <title>Code Fellows Python 401 Learning Journal</title>
 
-    <link href="{{ request.static_url('learning_journal:static/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
     <link href="{{ request.static_url('learning_journal:static/css/lj.css') }}" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -38,7 +42,19 @@
               <li><a href="#">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">Log In via GitHub</a></li>
+              {% if not request.authenticated_userid %}
+              <li><a href="{{ request.login_url('github') }}">Log In via GitHub</a></li>
+              {% else %}
+              <li role="presentation" class="dropdown">
+                <a id="personaltoolsLabel" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
+                  Welcome, {{ request.session.user.display_name }} <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="personaltoolsLabel">
+                  <li><a href="#">My Entries</a></li>
+                  <li><a href="{{ request.route_url('logout') }}">Log Out</a></li>
+                </ul>
+              </li>
+              {% endif %}
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -62,7 +78,8 @@
         <p>&copy; 2016, Cris Ewing, Developer LLC</p>
       </div>
     </footer>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="{{ request.static_url('learning_journal:static/js/vendor.min.js') }}"></script>
     <script src="{{ request.static_url('learning_journal:static/js/lj.js') }}"></script>
   </body>
