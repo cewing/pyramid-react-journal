@@ -74,3 +74,6 @@ target/
 # js shit
 node_modules/
 .sass-cache
+
+# local env secrets
+secrets*
