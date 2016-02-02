@@ -38,7 +38,7 @@ var EntryList = React.createClass({
     render: function() {
         var entries = [];
         for (var i = 0; i < this.props.entryCount; i++) {
-            entries.push(<Entry />)
+            entries.push(<Entry key={i} />)
         }
         return (
             <div>
