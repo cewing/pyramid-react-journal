@@ -1,0 +1,8 @@
+{% macro nav_link(text, route_name) %}
+{% set this_url = request.route_url(route_name, *varargs, **kwargs) %}
+  {% if request.url == this_url %}
+    <li class="active"><a href="{{ this_url }}">{{ text }}</a></li>
+  {% else %}
+    <li><a href="{{ this_url }}">{{ text }}</a></li>
+  {% endif %}
+{% endmacro %}
