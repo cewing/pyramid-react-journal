@@ -26,13 +26,9 @@ var plumberErrorHandler = { errorHandler: notify.onError({
     })
 };
 
-var config = {
-     sassPath: './app_source/sass',
-     bootstrapDir: './node_modules/bootstrap' ,
-}
-
 var deps = [
     'jquery',
+    'bootstrap',
     'lodash',
     'react',
     'react-dom',
@@ -43,7 +39,7 @@ var app_bundler = function() {
     return browserify({
         entries: ['./app_source/js/lj.js'],
         external: deps,
-        bundleExternal: false,
+        bundleExternal: true,
         transform: [[babelify, {presets: ["es2015", "react"]}]],
         debug: true, // adds sourcemap
         cache: {}, packageCache: {}, fullPaths: true // needed for watchify
@@ -62,25 +58,25 @@ var app_bundle_pipeline = function(bundler) {
         .pipe(notify({title: 'Gulp', icon: notifyInfo.icon, message: 'Built JS'}));
 };
 
-//vendor script bundle
-gulp.task('vendor', function() {
-    return browserify({
-        require: deps,
-        debug: false,  // no sourcemap for vendor libs
-    })
-    .bundle()
-    .pipe(source('vendor.js'))
-    .pipe(buffer())
-    .pipe(uglify())
-    .pipe(rename('vendor.min.js'))
-    .pipe(gulp.dest('./learning_journal/static/js/'))
-    .pipe(notify({title: 'Gulp', icon: notifyInfo.icon, message: 'Built vendor JS'}));
-});
+var app_minify_pipeline = function(bundler) {
+    return bundler
+        .bundle()  // create new bundle using the cache
+        .pipe(source('lj.js'))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(rename('lj.min.js'))
+        .pipe(gulp.dest('./learning_journal/static/js/'))
+        .pipe(notify({title: 'Gulp', icon: notifyInfo.icon, message: 'Built Minified JS'}));
+};
 
 //scripts
 gulp.task('scripts', function() {
     return app_bundle_pipeline(app_bundler());
 });
+
+gulp.task('minify', function() {
+    return app_minify_pipeline(app_bundler());
+})
 
 //styles
 gulp.task('styles', function() {
@@ -92,12 +88,14 @@ gulp.task('styles', function() {
 });
 
 //watch and rebuild
-gulp.task('watch', ['vendor', 'scripts', 'styles'], function() {
+gulp.task('watch', ['minify', 'scripts', 'styles'], function() {
     gulp.watch('./app_source/sass/*.scss', ['styles']);
 
     var watcher = watchify(app_bundler());
-    watcher.on('update', function() { app_bundle_pipeline(watcher); }); // when any file updates
-    return app_bundle_pipeline(watcher); // do initial bundle when the task starts
+    watcher.on('update', function() {
+        app_bundle_pipeline(watcher);
+        app_minify_pipeline(watcher);
+    }); // when any file updates
 });
 
-gulp.task('default', ['vendor', 'scripts', 'styles']);
+gulp.task('default', ['minify', 'scripts', 'styles']);

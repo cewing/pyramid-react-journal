@@ -4,6 +4,8 @@
   "description": "A Group learning journal built with Pyramid and React.js",
   "main": "lj.js",
   "repository": "cewing/pyramid_react_lj",
+  "author": "Cris Ewing",
+  "license": "MIT",
   "dependencies": {
     "bootstrap": "^3.3.6",
     "jquery": "^2.2.0",
@@ -18,6 +20,7 @@
     "bootstrap-sass": "^3.3.6",
     "bower": "^1.7.7",
     "browserify": "^13.0.0",
+    "browserify-shim": "^3.8.12",
     "font-awesome": "^4.5.0",
     "gulp": "^3.9.0",
     "gulp-notify": "^2.2.0",
@@ -31,6 +34,12 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
   },
-  "author": "Cris Ewing",
-  "license": "MIT"
+  "browserify-shim": {
+    "jquery": "$"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  }
 }
