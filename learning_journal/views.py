@@ -2,7 +2,11 @@ from __future__ import unicode_literals
 import json
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
 from pyramid.security import remember, forget
-from pyramid.view import view_config
+from pyramid.view import (
+    view_config,
+    notfound_view_config,
+    forbidden_view_config
+    )
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from .forms import EntryUpdateForm, EntryCreateForm
@@ -13,7 +17,11 @@ from .models import (
     )
 
 
-@view_config(route_name='home', renderer='templates/home.jinja2')
+# Basic applicaion views
+
+@view_config(
+    route_name='home', renderer='templates/home.jinja2', permission='view'
+)
 def home_view(request):
     authenticated = request.authenticated_userid
     page = int(request.params.get('page', 1))
@@ -28,6 +36,7 @@ def home_view(request):
             curpage_attr={'class': 'pagerItem'},
             dotdot_attr={'class': 'pagerItem'},
         )
+
     def jsonify_entry(entry, request=request):
         entry_json = entry.to_json()
         entry_json['url'] = request.route_url('entry', id=entry.id)
@@ -47,55 +56,18 @@ def home_view(request):
     return data
 
 
-@view_config(route_name='about', renderer='templates/about.jinja2')
+@view_config(
+    route_name='about', renderer='templates/about.jinja2', permission='view'
+)
 def about_view(request):
     return {}
 
 
-@view_config(route_name='entry', renderer='templates/entry.jinja2')
-def entry_view(request):
-    id = int(request.matchdict.get('id', -1))
-    entry = Entry.by_id(id)
-    if entry is None:
-        raise HTTPNotFound()
-    entry_json = entry.to_json()
-    entry_json['actions'] = {}
-    if entry.is_owned_by(request.user):
-        entry_json['actions']['edit'] = request.route_url('edit', id=entry.id)
-        entry_json['actions']['delete'] = request.route_url('delete', id=entry.id)
-    data = {
-        'react_component': 'LJEntry',
-        'react_props': json.dumps({
-            'entry': entry_json,
-            'user': request.user.to_json(),
-        })
-    }
-    return data
+# Views to manage entries
 
-
-@view_config(route_name='edit', renderer='templates/edit.jinja2')
-def edit_view(request):
-    id = int(request.matchdict.get('id', -1))
-    entry = Entry.by_id(id)
-    # 404 if no entry
-    if entry is None:
-        raise HTTPNotFound()
-    # 403 if not my entry
-    if not entry.is_owned_by(request.user):
-        raise HTTPForbidden()
-
-    form = EntryUpdateForm(request.POST, entry)
-    if request.method == 'POST' and form.validate():
-        form.populate_obj(entry)
-        return HTTPFound(location=request.route_url('entry', id=entry.id))
-    return {
-        'form': form,
-        'url': request.current_route_url(),
-        'cancel': request.route_url('entry', id=entry.id)
-    }
-
-
-@view_config(route_name='create', renderer='templates/create.jinja2')
+@view_config(
+    route_name='create', renderer='templates/create.jinja2', permission='create'
+)
 def create_view(request):
     if not request.user:
         return HTTPForbidden()
@@ -110,18 +82,52 @@ def create_view(request):
     return {'form': form, 'cancel': request.route_url('home')}
 
 
-@view_config(route_name='delete', renderer='string')
-def delete_view(request):
-    id = int(request.matchdict.get('id', -1))
-    entry = Entry.by_id(id)
-    if entry is None:
-        return HTTPFound(location=request.route_url('home'))
-    if not entry.is_owned_by(request.user):
-        raise HTTPForbidden()
+@view_config(
+    route_name='entry', renderer='templates/entry.jinja2', permission='read'
+)
+def entry_view(context, request):
+    entry_json = context.to_json()
+    entry_json['actions'] = actions = {}
+    # use permissions to control access to edit and delete actions
+    for action in ['edit', 'delete']:
+        if request.has_permission(action):
+            actions[action] = request.route_url(action, id=context.id)
 
-    DBSession.delete(entry)
+    data = {
+        'react_component': 'LJEntry',
+        'react_props': json.dumps({
+            'entry': entry_json,
+            'user': request.user.to_json(),
+        })
+    }
+    return data
+
+
+@view_config(
+    route_name='edit', renderer='templates/edit.jinja2', permission='edit'
+)
+def edit_view(context, request):
+    view_url = request.route_url('entry', id=context.id)
+    form = EntryUpdateForm(request.POST, context)
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(context)
+        return HTTPFound(location=view_url)
+    return {
+        'form': form,
+        'url': request.current_route_url(),
+        'cancel': view_url
+    }
+
+
+@view_config(route_name='delete', renderer='string', permission='delete')
+def delete_view(context, request):
+    if context is not None:
+        DBSession.delete(context)
+
     return HTTPFound(location=request.route_url('home'))
 
+
+# Authentication views
 
 @view_config(
     context='velruse.AuthenticationComplete',
@@ -162,3 +168,26 @@ def login_complete_view(context, request):
 def logout_view(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
+
+
+# Error Views
+
+@notfound_view_config(renderer='/templates/err.jinja2')
+def notfound_view(context, request):
+    data = {
+        'title': 'Oooops!',
+        'subtitle': 'We couldn\'t find what you are looking for',
+        'explanation': 'Maybe it just doesn\'t exist?'
+    }
+    return data
+
+
+@forbidden_view_config(renderer='templates/err.jinja2')
+def forbidden_view(context, request):
+    data = {
+        'title': 'Uh uh uh!',
+        'subtitle': 'You aren\'t allowed to do that!',
+        'explanation': ('What? You say you should be able to? Contact your '
+                        'instructor or TA and see if they can help.')
+    }
+    return data

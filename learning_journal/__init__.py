@@ -13,6 +13,7 @@ from .models import (
     DBSession,
     Base,
     )
+from .security import DefaultRoot, EntryRoot, groupfinder
 from .utils import get_user, get_approved_users, get_admin_users
 
 
@@ -28,7 +29,21 @@ def main(global_config, **settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 
-    config = Configurator(settings=settings)
+    # authn/authz configuration
+    auth_secret = os.environ.get('LJ_AUTH_SECRET', 'itsaseekrit')
+    authentication_policy=AuthTktAuthenticationPolicy(
+        secret=auth_secret,
+        hashalg='sha512',
+        callback=groupfinder,
+    )
+    authorization_policy=ACLAuthorizationPolicy()
+
+    config = Configurator(
+        settings=settings,
+        authentication_policy=authentication_policy,
+        authorization_policy=authorization_policy,
+        root_factory=DefaultRoot,
+    )
 
     # github authentication configuration:
     config.include('velruse.providers.github')
@@ -56,16 +71,6 @@ def main(global_config, **settings):
     session_factory = SignedCookieSessionFactory(session_secret)
     config.set_session_factory(session_factory)
 
-    # authn/authz configuration
-    auth_secret = os.environ.get('LJ_AUTH_SECRET', 'itsaseekrit')
-    authentication_policy=AuthTktAuthenticationPolicy(
-        secret=auth_secret,
-        hashalg='sha512'
-    )
-    config.set_authentication_policy(authentication_policy)
-    authorization_policy=ACLAuthorizationPolicy()
-    config.set_authorization_policy(authorization_policy)
-
     # templating configuration
     config.include('pyramid_jinja2')
 
@@ -73,10 +78,16 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('about', '/about')
-    config.add_route('create', 'entry/create')
-    config.add_route('entry', '/entry/{id:\d+}')
-    config.add_route('edit', '/entry/{id:\d+}/edit')
-    config.add_route('delete', '/entry/{id:\d+}/delete')
+    config.add_route('create', '/entry/create')
+    config.add_route(
+        'entry', '/entry/{id:\d+}', factory=EntryRoot, traverse='/{id:\d+}'
+    )
+    config.add_route(
+        'edit', '/entry/{id:\d+}/edit', factory=EntryRoot, traverse='/{id:\d+}'
+    )
+    config.add_route(
+        'delete', '/entry/{id:\d+}/delete', factory=EntryRoot, traverse='/{id:\d+}'
+    )
     config.add_route('logout', '/logout')
 
     # add user to the request

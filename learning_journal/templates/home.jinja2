@@ -1,16 +1,18 @@
 {% extends "base.jinja2" %}
 {% block body %}
 <div class="row">
-  {% if request.authenticated_userid %}
+  {% if request.has_permission('read') %}
     <div class="page-header col-sm-12">
       <h1>Today I Learned &hellip; <small>401 Python Learning Journal</small></h1>
     </div>
     <main class="col-sm-9" data-react-component="{{ react_component }}" data-react-props="{{ react_props }}">
     </main>
     <aside class="col-sm-3">
-      <div class="button-group" role="group">
-        <a class="btn btn-primary" href="{{ request.route_url('create') }}">Add a New Entry</a>
-      </div>
+      {% if request.has_permission('create') %}
+        <div class="button-group" role="group">
+          <a class="btn btn-primary" href="{{ request.route_url('create') }}">Add a New Entry</a>
+        </div>
+      {% endif %}
     </aside>
   {% else %}
     <div class="jumbotron">

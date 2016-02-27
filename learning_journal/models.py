@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import datetime
 import markdown
 from paginate_sqlalchemy import SqlalchemyOrmPage
+from pyramid.security import Allow, Everyone
 from sqlalchemy import (
     Column,
     Index,
@@ -75,6 +76,22 @@ class Entry(Base):
     )
     author_id = Column(Integer, ForeignKey('users.id'))
     author = relationship("User", back_populates="entries")
+
+    # object level security
+    @property
+    def __acl__(self):
+        return [
+            (Allow, Everyone, 'view'),
+            (Allow, 'g:users', 'read'),
+            (Allow, 'g:users', 'create'),
+            (Allow, self.author.username, 'edit'),
+            (Allow, self.author.username, 'delete'),
+        ]
+
+    # traversal
+    @property
+    def __name__(self):
+        return self.id
 
     def __json__(self):
         return {
