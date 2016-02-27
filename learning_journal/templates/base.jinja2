@@ -35,13 +35,13 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">401 Python</a>
+            <a class="navbar-brand" href="{{ request.route_url('home') }}">401 Python</a>
           </div>
           <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
               {% block navlinks %}
               {{ nav_link('Home', 'home') }}
-              {{ nav_link('About', 'about') }}
+              {# {{ nav_link('About', 'about') }} #}
               {% endblock %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -50,7 +50,7 @@
               {% else %}
               <li role="presentation" class="dropdown">
                 <a id="personaltoolsLabel" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
-                  Welcome, {{ request.session.user.display_name }} <span class="caret"></span>
+                  Welcome, {{ request.user.display_name }} <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="personaltoolsLabel">
                   <li><a href="#">My Entries</a></li>
@@ -68,7 +68,19 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-1" class="mobile-hidden"></div>
-          {% block body %}{% endblock %}
+          <div class="col-md-10" id="content">
+            {% for queuename in ['danger', 'warning', 'info', 'success'] %}
+              {% for message in request.session.pop_flash(queuename) %}
+                <div class="alert alert-{{ queuename }} alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <strong class="{{ queuename }}">{{ queuename }}</strong> {{ message }}
+                </div>
+              {% endfor %}
+            {% endfor %}
+            {% block body %}{% endblock %}
+          </div>
           <div class="col-md-1" class="mobile-hidden"></div>
           </div>
         </div>

@@ -1,0 +1,8 @@
+{% extends "base.jinja2" %}
+{% block body %}
+<div class="row">
+  {% if request.authenticated_userid %}
+  <div class="page-header col-sm-12" data-react-component="{{ react_component }}" data-react-props="{{ react_props }}"></div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,4 +1,23 @@
 {% extends "base.jinja2" %}
 {% block body %}
-<div class="col-md-10" id="content"></div>
+<div class="row">
+  {% if request.authenticated_userid %}
+    <div class="page-header col-sm-12">
+      <h1>Today I Learned &hellip; <small>401 Python Learning Journal</small></h1>
+    </div>
+    <main class="col-sm-9" data-react-component="{{ react_component }}" data-react-props="{{ react_props }}">
+    </main>
+    <aside class="col-sm-3">
+      <div class="button-group" role="group">
+        <a class="btn btn-primary" href="{{ request.route_url('create') }}">Add a New Entry</a>
+      </div>
+    </aside>
+  {% else %}
+    <div class="jumbotron">
+      <h1>401 Python Learning Journal</h1>
+      <p>This online learning journal is for students of the Code Fellows 401 Python Course. This course is offered at the Seattle campus.</p>
+      <p><a class="btn btn-primary btn-lg" href="https://codefellows.org/locations/learn-to-code-in-seattle" role="button">Learn more</a></p>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

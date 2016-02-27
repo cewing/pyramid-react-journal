@@ -13,6 +13,7 @@ from .models import (
     DBSession,
     Base,
     )
+from .utils import get_user, get_approved_users, get_admin_users
 
 
 def main(global_config, **settings):
@@ -72,6 +73,18 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('about', '/about')
+    config.add_route('create', 'entry/create')
+    config.add_route('entry', '/entry/{id:\d+}')
+    config.add_route('edit', '/entry/{id:\d+}/edit')
+    config.add_route('delete', '/entry/{id:\d+}/delete')
     config.add_route('logout', '/logout')
+
+    # add user to the request
+    config.add_request_method(get_user, 'user', reify=True)
+    # approved and admin usernames, too
+    config.add_request_method(get_approved_users, 'approved', reify=True)
+    config.add_request_method(get_admin_users, 'admins', reify=True)
+
     config.scan()
+
     return config.make_wsgi_app()

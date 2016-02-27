@@ -1,0 +1,9 @@
+{% extends "base.jinja2" %}
+{% from 'macros.jinja2' import render_form %}
+{% block body %}
+<div class="row">
+  <div class="col-sm-6">
+    {{ render_form(form, cancel_url=cancel, action_text='Save New Entry') }}
+  </div>
+</div>
+{% endblock %}
