@@ -34,7 +34,7 @@ def home_view(request):
         return entry_json
 
     entries = [e for e in paginator]
-    entries = map(jsonify_entry, entries)
+    entries = list(map(jsonify_entry, entries))
 
     data = {
         'react_component': 'LJEntryList',
