@@ -1,4 +1,26 @@
-0.0
+0.1
 ---
 
--  Initial version
+- Implement simple Entry model
+  [cewing]
+
+- Implement simple User model
+  [cewing]
+
+- Add authentication via GitHub (velruse)
+  [cewing]
+
+- Implement entry list and detail views
+  [cewing]
+
+- Implement entry editing and deletion
+  [cewing]
+
+- Implement creating new entries
+  [cewing]
+
+- Implement ACL security features
+  [cewing]
+
+- Incorporate authentication whitelist via settings
+  [cewing]
