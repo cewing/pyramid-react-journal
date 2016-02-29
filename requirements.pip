@@ -14,6 +14,7 @@ paginate==0.5.2
 paginate-sqlalchemy==0.2.0
 psycopg2==2.6.1
 pyramid==1.6
+pyramid-exclog==0.7
 pyramid-jinja2==2.6.2
 pyramid-mako==1.0.2
 pyramid-tm==0.12.1

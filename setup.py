@@ -21,6 +21,7 @@ requires = [
     'velruse',
     'markdown',
     'pygments',
+    'pyramid_exclog',
     ]
 
 setup(name='learning-journal',
