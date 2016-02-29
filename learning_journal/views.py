@@ -144,6 +144,7 @@ def login_complete_view(context, request):
         except NoResultFound:
             user = User.create(display_name, username)
             msg = "You have been added to the site.  Welcome!"
+            level = 'success'
         except MultipleResultsFound:
             msg = 'Unable to identify a unique registered user'
             level = 'danger'
