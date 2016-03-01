@@ -26,11 +26,15 @@ def get_user(request):
     return user
 
 
+def get_names(request, key):
+    raw = request.registry.settings.get(key, '')
+    fixed = map(str.lower, raw.split())
+    return set(list(fixed))
+
+
 def get_approved_users(request):
-    raw = request.registry.settings.get(APPROVED,'')
-    return set(raw.split())
+    return get_names(request, APPROVED)
 
 
 def get_admin_users(request):
-    raw = request.registry.settings.get(ADMINS, '')
-    return set(raw.split())
+    return get_names(request, ADMINS)

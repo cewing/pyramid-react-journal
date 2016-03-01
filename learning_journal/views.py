@@ -140,7 +140,7 @@ def login_complete_view(context, request):
         display_name = ''
     username = profile['preferredUsername']
     user = msg = None
-    if username in request.approved:
+    if username.lower() in request.approved:
         try:
             user = User.by_username(username)
         except NoResultFound:

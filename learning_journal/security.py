@@ -21,9 +21,9 @@ class DefaultRoot(object):
 def groupfinder(userid, request):
     # this method is expected to return None if the userid is not "okay"
     groups = []
-    if userid in request.approved:
+    if userid.lower() in request.approved:
         groups.append('g:users')
-    if userid in request.admins:
+    if userid.lower() in request.admins:
         groups.append('g:admins')
     return groups or None
 
