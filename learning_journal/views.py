@@ -136,6 +136,8 @@ def delete_view(context, request):
 def login_complete_view(context, request):
     profile = context.profile
     display_name = profile['displayName']
+    if display_name is None:
+        display_name = ''
     username = profile['preferredUsername']
     user = msg = None
     if username in request.approved:
