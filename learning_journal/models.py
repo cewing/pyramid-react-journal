@@ -32,15 +32,15 @@ class User(Base):
     display_name = Column(Unicode(128), nullable=False)
     username = Column(Unicode(128), nullable=False)
 
-    def __json__(self):
+    def __json__(self, request):
         return {
             'username': self.username,
             'display_name': self.display_name,
             'id': self.id,
         }
 
-    def to_json(self):
-        return self.__json__()
+    def to_json(self, request=None):
+        return self.__json__(request)
 
     @classmethod
     def by_username(cls, username, session=None):
@@ -93,14 +93,14 @@ class Entry(Base):
     def __name__(self):
         return self.id
 
-    def __json__(self):
+    def __json__(self, request):
         return {
             'id': self.id,
             'title': self.title,
             'text': self.text,
             'markdown': self.markdown,
             'created': self.created.isoformat(),
-            'author': self.author.to_json(),
+            'author': self.author,
         }
 
     def to_json(self):
@@ -138,6 +138,13 @@ class Entry(Base):
         if session is None:
             session = DBSession
         return session.query(cls).get(id)
+
+    @classmethod
+    def by_author(cls, author, session=None):
+        if session is None:
+            session = DBSession
+        all_entries = cls.all()
+        return all_entries.filter(cls.author == author)
 
     @classmethod
     def get_paginator(cls, request, page=1):

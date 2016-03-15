@@ -56,6 +56,14 @@ def home_view(request):
     return data
 
 
+@view_config(route_name='mine', renderer="json", permission='view')
+def mine_view(request):
+    if not request.user:
+        return HTTPForbidden()
+    my_entries = Entry.by_author(request.user)
+    return {'entries': my_entries.all()}
+
+
 @view_config(
     route_name='about', renderer='templates/about.jinja2', permission='view'
 )
@@ -134,6 +142,7 @@ def delete_view(context, request):
     renderer='json'
 )
 def login_complete_view(context, request):
+    import pdb; pdb.set_trace()
     profile = context.profile
     display_name = profile['displayName']
     if display_name is None:
