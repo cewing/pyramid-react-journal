@@ -9,9 +9,12 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
 
 requires = [
-    'paginate_sqlalchemy',
+    'alembic',
+    'pygments',
     'pyramid',
+    'pyramid_exclog',
     'pyramid_jinja2',
+    'paginate_sqlalchemy',
     'pyramid_tm',
     'SQLAlchemy',
     'transaction',
@@ -20,8 +23,6 @@ requires = [
     'wtforms',
     'velruse',
     'markdown',
-    'pygments',
-    'pyramid_exclog',
     ]
 
 setup(name='learning-journal',
