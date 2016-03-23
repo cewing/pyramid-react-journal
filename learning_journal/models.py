@@ -19,6 +19,8 @@ from sqlalchemy.orm import (
     sessionmaker,
     relationship,
     )
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -31,6 +33,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     display_name = Column(Unicode(128), nullable=False)
     username = Column(Unicode(128), nullable=False)
+    key = Column(UUID(as_uuid=True))
 
     def __json__(self, request):
         return {
@@ -41,6 +44,12 @@ class User(Base):
 
     def to_json(self, request=None):
         return self.__json__(request)
+
+    @property
+    def api_key(self):
+        if self.key is None:
+            self.key = uuid.uuid4()
+        return self.key
 
     @classmethod
     def by_username(cls, username, session=None):
