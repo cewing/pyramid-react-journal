@@ -163,7 +163,6 @@ def delete_view(context, request):
     renderer='json'
 )
 def login_complete_view(context, request):
-    import pdb; pdb.set_trace()
     profile = context.profile
     display_name = profile['displayName']
     if display_name is None:
