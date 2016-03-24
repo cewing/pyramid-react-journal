@@ -31,7 +31,7 @@ var LJByline = React.createClass({
         var entry = this.props.entry,
             author = entry ? entry.author : {},
             display_name = author ? author.display_name : '',
-            user_name = author ? author.user_name : '',
+            user_name = author ? author.username : '',
             author_name = display_name || user_name || 'anonymous',
             created = entry ? entry.created : '';
 
