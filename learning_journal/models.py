@@ -121,11 +121,11 @@ class Entry(Base):
             'text': self.text,
             'markdown': self.markdown,
             'created': self.created.isoformat(),
-            'author': self.author,
+            'author': self.author.to_json(request),
         }
 
-    def to_json(self):
-        return self.__json__()
+    def to_json(self, request=None):
+        return self.__json__(request)
 
     def is_owned_by(self, user):
         if user is None:
