@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import json
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound, HTTPForbidden
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
+from pyramid.response import Response
 from pyramid.security import remember, forget
 from pyramid.view import (
     view_config,
@@ -71,7 +72,27 @@ def about_view(request):
     return {}
 
 
+@view_config(
+    route_name='apikey', renderer='templates/key.jinja2', permission='read'
+)
+def key_view(request):
+    if not request.user:
+        return HTTPForbidden
+    return {'key': request.user.api_key}
+
+
 # Views to manage entries
+
+@view_config(route_name="export", renderer='json', valid_api_key=True)
+def api_export_view(request):
+    key = request.params['apikey']
+    try:
+        user = User.by_api_key(key)
+    except (NoResultFound, MultipleResultsFound):
+        result = {'error': 'INVALID API KEY'}
+    else:
+        result = Entry.by_author(user).all()
+    return result
 
 @view_config(
     route_name='create', renderer='templates/create.jinja2', permission='create'
@@ -192,6 +213,16 @@ def notfound_view(context, request):
         'explanation': 'Maybe it just doesn\'t exist?'
     }
     return data
+
+
+@notfound_view_config(route_name='export')
+def api_notfound(context, request):
+    return Response(
+        '{"error": "INVALID API KEY"}',
+        status="404 Not Found",
+        content_type="application/json",
+        content_type_params={'charset': 'utf-8'}
+    )
 
 
 @forbidden_view_config(renderer='templates/err.jinja2')

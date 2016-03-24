@@ -1,0 +1,55 @@
+{% extends "base.jinja2" %}
+{% from 'macros.jinja2' import render_form %}
+{% block body %}
+<div class="row">
+  <div class="col-sm-12">
+    <h1>Greetings, {{ request.user.username }}</h1>
+    <p>This is your api key: <code>{{ key }}</code></p>
+    <p>To use this key, provide it as the "apikey" query parameter in a GET request to the class learning journal api export endpoint:</p>
+    <pre>
+    {{ request.route_url('export', _query={'apikey': key }) }}
+    </pre>
+    <h2>API Documentation</h2>
+    <p>This api is very rudimentary.  There are only two endpoints:
+      <ul>
+        <li><code>/api/key</code>: This page</li>
+        <li><code>/api/export</code>: Export of all entries associated with the provided *api key*</li>
+      </ul>
+    </p>
+    <h3>Exporting Journal Entries</h3>
+    <p>When a successful request is made to the <code>/api/export</code> endpoint, the return value
+       will be an HTTP response with a <code>Content-Type</code> of <code>application/json</code>,
+       encoded using the <code>utf-8</code> charset. The body of the response will contain a JSON
+       array containing zero or more Journal Entries.  Each entry will be a JSON object with the
+       following attributes:
+    </p>
+    <dl>
+      <dt><code>id</code></dt>
+      <dd>The integer id of this entry in the source database</dd>
+      <dt><code>title</code></dt>
+      <dd>The title of this entry.  Values will be plain text</dd>
+      <dt><code>text</code></dt>
+      <dd>The text of this entry.  The value is plain text, but may contain markdown formatting.</dd>
+      <dt><code>markdown</code></dt>
+      <dd>The text of this entry, rendered to HTML using the python <code>markdown</code> library</dd>
+      <dt><code>created</code></dt>
+      <dd>The date and time at which this entry was created. Values are UTC, expressed in ISO 8601 format: <code>YYYY-MM-DDTHH:MM:SS.mmmmmm</code></dd>
+      <dt><code>author</code></dt>
+      <dd>Information about the author of this entry</dd>
+    </dl>
+    <p>The <code>author</code> attribute of each entry object will be expressed as a JSON object
+    with the following attributes:
+    </p>
+    <dl>
+      <dt><code>id</code></dt>
+      <dd>The integer id of this author in the source database</dd>
+      <dt><code>username</code></dt>
+      <dd>The GitHub username of the author</dd>
+      <dt><code>display_name</code></dt>
+      <dd>The GitHub display name of the author, if present.</dd>
+    </dl>
+    <h3>Troubleshooting</h3>
+    <p>A valid api key is required to access the export endpoint. If no such api key exists, a 404 response will be returned</p>
+  </div>
+</div>
+{% endblock %}
