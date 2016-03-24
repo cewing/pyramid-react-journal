@@ -52,6 +52,18 @@ class User(Base):
         return self.key
 
     @classmethod
+    def valid_api_key(cls, key, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(cls.key == key).count() > 0
+
+    @classmethod
+    def by_api_key(cls, key, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(cls.key == key).one()
+
+    @classmethod
     def by_username(cls, username, session=None):
         if session is None:
             session = DBSession
