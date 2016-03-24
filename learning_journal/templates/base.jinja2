@@ -53,7 +53,7 @@
                   Welcome, {{ request.user.display_name }} <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="personaltoolsLabel">
-                  <li><a href="#">My Entries</a></li>
+                  <li><a href="{{ request.route_url('apikey') }}">API Key</a></li>
                   <li><a href="{{ request.route_url('logout') }}">Log Out</a></li>
                 </ul>
               </li>
