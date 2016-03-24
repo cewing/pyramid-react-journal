@@ -13,7 +13,7 @@ from .models import (
     DBSession,
     Base,
     )
-from .security import DefaultRoot, EntryRoot, groupfinder
+from .security import DefaultRoot, EntryRoot, groupfinder, APIKeyPredicate
 from .utils import get_user, get_approved_users, get_admin_users
 
 
@@ -44,6 +44,9 @@ def main(global_config, **settings):
         authorization_policy=authorization_policy,
         root_factory=DefaultRoot,
     )
+
+    # add a view predicate to validate api keys:
+    config.add_view_predicate('valid_api_key', APIKeyPredicate)
 
     # github authentication configuration:
     config.include('velruse.providers.github')
@@ -89,6 +92,8 @@ def main(global_config, **settings):
     config.add_route(
         'delete', '/entry/{id:\d+}/delete', factory=EntryRoot, traverse='/{id:\d+}'
     )
+    config.add_route('apikey', '/api/key')
+    config.add_route('export', '/api/export')
     config.add_route('logout', '/logout')
 
     # add user to the request

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from pyramid.security import Allow, Everyone
 from pyramid.security import ALL_PERMISSIONS
 
-from .models import Entry
+from .models import Entry, User
 
 
 class DefaultRoot(object):
@@ -45,3 +45,17 @@ class EntryRoot(object):
             raise KeyError(name)
         entry_obj.__parent__ = self
         return entry_obj
+
+
+class APIKeyPredicate(object):
+    def __init__(self, val, config):
+        self.val = val
+
+    def text(self):
+        return "This predicate requires a valid api key if set to true"
+
+    phash = text
+
+    def __call__(self, context, request):
+        key = request.params.get('apikey', False)
+        return key and User.valid_api_key(key)
