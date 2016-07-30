@@ -82,3 +82,5 @@ node_modules/
 
 # local env secrets
 secrets*
+
+aws_RDS_instance_details.txt
