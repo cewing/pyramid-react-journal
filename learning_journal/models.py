@@ -162,6 +162,14 @@ class Entry(Base):
         return session.query(cls).order_by(cls.created.desc())
 
     @classmethod
+    def for_active_courses(cls, course_ids, session=None):
+        """returns entries written by users belonging to courses in course_ids
+        """
+        all = cls.all(session)
+        filtered = all.join(User).filter(User.course_id.in_(course_ids))
+        return filtered
+
+    @classmethod
     def by_id(cls, id, session=None):
         if session is None:
             session = DBSession
@@ -176,7 +184,8 @@ class Entry(Base):
 
     @classmethod
     def get_paginator(cls, request, page=1):
-        query = cls.all()
+        allowed_courses = set(['all']) | request.courses
+        query = cls.for_active_courses(allowed_courses)
         query_params = request.GET.mixed()
 
         def url_maker(link_page):
