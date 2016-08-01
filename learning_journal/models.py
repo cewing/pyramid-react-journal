@@ -157,6 +157,7 @@ class Entry(Base):
 
     @classmethod
     def all(cls, session=None):
+        """returns all entries"""
         if session is None:
             session = DBSession
         return session.query(cls).order_by(cls.created.desc())
@@ -171,15 +172,17 @@ class Entry(Base):
 
     @classmethod
     def by_id(cls, id, session=None):
+        """returns one entry, identified by 'id'"""
         if session is None:
             session = DBSession
         return session.query(cls).get(id)
 
     @classmethod
     def by_author(cls, author, session=None):
+        """returns all entries by the given author"""
         if session is None:
             session = DBSession
-        all_entries = cls.all()
+        all_entries = cls.all(session)
         return all_entries.filter(cls.author == author)
 
     @classmethod
