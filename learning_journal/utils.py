@@ -8,6 +8,7 @@ from .models import User
 
 APPROVED = 'learning_journal.approved_usernames'
 ADMINS = 'learning_journal.admins'
+COURSES = 'learning_journal.course_ids'
 
 
 def create_session(settings):
@@ -32,9 +33,29 @@ def get_names(request, key):
     return set(list(fixed))
 
 
+def get_users(request, key):
+    raw = request.registry.settings.get(key, '')
+    # split on whitespace and strip to remove commas
+    fixed = list(map(
+        lambda x: x.strip(','),
+        map(str.lower, raw.split())
+    ))
+    first = fixed[::2]
+    second = fixed[1::2]
+    return dict(zip(first, second))
+
+
 def get_approved_users(request):
-    return get_names(request, APPROVED)
+    return get_users(request, APPROVED)
 
 
 def get_admin_users(request):
-    return get_names(request, ADMINS)
+    return get_users(request, ADMINS)
+
+
+def get_active_courses(request):
+    user_courses = request.user.allowed_courses
+    all_courses = get_names(request, COURSES)
+    if 'all' not in user_courses:
+        all_courses &= user_courses
+    return all_courses

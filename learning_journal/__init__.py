@@ -14,7 +14,12 @@ from .models import (
     Base,
     )
 from .security import DefaultRoot, EntryRoot, groupfinder, APIKeyPredicate
-from .utils import get_user, get_approved_users, get_admin_users
+from .utils import (
+    get_user,
+    get_approved_users,
+    get_admin_users,
+    get_active_courses,
+    )
 
 
 def main(global_config, **settings):
@@ -101,6 +106,7 @@ def main(global_config, **settings):
     # approved and admin usernames, too
     config.add_request_method(get_approved_users, 'approved', reify=True)
     config.add_request_method(get_admin_users, 'admins', reify=True)
+    config.add_request_method(get_active_courses, 'courses', reify=True)
 
     config.scan()
 
