@@ -1,0 +1,44 @@
+---
+
+- hosts: tag_Name_Class_Learning_Journal
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  roles:
+    - role: nginx
+      sudo: yes
+      nginx_sites:
+        default:
+          - listen 80
+          - server_name "{{ app_domain_name }}"
+          - access_log "/var/log/nginx/{{app_name}}.log"
+          - return 301 https://$server_name$request_uri
+        secure:
+          - listen 443
+          - server_name sea401d4.crisewing.com
+          - add_header Strict-Transport-Security "max-age=31536000"
+          - root /usr/share/nginx/html
+          - index index.html index.htm
+          - ssl on
+          - ssl_certificate {{ssl_root}}{{app_domain_name}}/{{ssl_cert_name}}
+          - ssl_certificate_key {{ssl_root}}{{app_domain_name}}/{{ssl_key_name}}
+          - ssl_session_timeout 5m
+          - ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2
+          - ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES"
+          - ssl_prefer_server_ciphers on
+          - location / {
+                proxy_pass http://127.0.0.1:8080;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Scheme $scheme;
+            }
+          - location /static/ {
+                root {{app_root}};
+            }
+
+  tasks:
+
+    - debug: var=hostvars
+    - debug: var=foo
