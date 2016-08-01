@@ -26,12 +26,13 @@ from .models import (
 def home_view(request):
     authenticated = request.authenticated_userid
     page = int(request.params.get('page', 1))
-    user = {}
+    user_data = {}
     paginator = []
     pagination = ''
     if authenticated:
+        # the get_paginator method handles filtering for users' allowed courses
         paginator = Entry.get_paginator(request, page=page)
-        user = request.user.to_json()
+        user_data = request.user.to_json()
         pagination = paginator.pager(
             link_attr={'class': 'pagerItem link'},
             curpage_attr={'class': 'pagerItem'},
@@ -49,7 +50,7 @@ def home_view(request):
     data = {
         'react_component': 'LJEntryList',
         'react_props': json.dumps({
-            'user': user,
+            'user': user_data,
             'entries': entries,
             'pagination': pagination
         })
