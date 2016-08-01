@@ -33,6 +33,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     display_name = Column(Unicode(128), nullable=False)
     username = Column(Unicode(128), nullable=False)
+    course_id = Column(Unicode(32), nullable=False, default=u"sea401d2")
     key = Column(UUID(as_uuid=True))
 
     def __json__(self, request):
@@ -40,6 +41,7 @@ class User(Base):
             'username': self.username,
             'display_name': self.display_name,
             'id': self.id,
+            'course_id': self.course_id.split('|')
         }
 
     def to_json(self, request=None):
@@ -50,6 +52,11 @@ class User(Base):
         if self.key is None:
             self.key = uuid.uuid4()
         return self.key
+
+    @property
+    def allowed_courses(self):
+        return set(self.course_id.split('|'))
+
 
     @classmethod
     def valid_api_key(cls, key, session=None):
