@@ -27,6 +27,10 @@ var LJByline = React.createClass({
         return time.format('dddd, D MMMM, YYYY, h:mm a');
     },
 
+    format_courses: function(author_data) {
+        return author_data.course_id.join(', ');
+    },
+
     render: function() {
         var entry = this.props.entry,
             author = entry ? entry.author : {},
@@ -37,7 +41,9 @@ var LJByline = React.createClass({
 
         return (
             <div className="byline">
-                By <span className="author">{author_name}</span> &mdash; {this.localizeTime(created)}
+                By <span className="author">{author_name}</span>
+                   <span className="courses"> ({this.format_courses(author)}) </span>
+                   &mdash; {this.localizeTime(created)}
             </div>
         );
     }
