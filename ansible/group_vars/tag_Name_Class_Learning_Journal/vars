@@ -1,0 +1,28 @@
+---
+
+app_user: ljuser
+user_home: /home/{{ app_user }}
+virtualenv_root: "{{ user_home }}/p3env"
+app_python: "{{ virtualenv_root }}/bin/python"
+git_repo_root: "{{ user_home }}/app"
+app_root: "{{ git_repo_root }}/learning_journal"
+app_domain_name: sea401d4.crisewing.com
+app_name: Learning Journal
+app_repo: https://github.com/cewing/pyramid-react-journal.git
+app_version: HEAD
+rds_db_instance: cfinstance
+ssl_root: /etc/letsencrypt/live/
+ssl_cert_name: fullchain.pem
+ssl_key_name: privkey.pem
+apt_packages:
+  - build-essential
+  - python3-dev
+  - python3-pip
+  - python-virtualenv
+  - libpq-dev
+  - supervisor
+  - git
+db_password: "{{ vault_db_password }}"
+github_api_token: "{{ vault_github_api_token }}"
+github_api_key: "{{ vault_github_api_key }}"
+github_api_secret: "{{ vault_github_api_secret }}"
