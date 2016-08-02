@@ -1,8 +1,0 @@
----
-
-app_root: /home/ubuntu/pyramid-react-journal/learning_journal
-app_domain_name: sea401d4.crisewing.com
-app_name: Learning Journal
-ssl_root: /etc/letsencrypt/live/
-ssl_cert_name: fullchain.pem
-ssl_key_name: privkey.pem
