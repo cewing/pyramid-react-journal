@@ -10,5 +10,16 @@
 - name: Create application user
   user: name={{ app_user }} group={{ app_user }}
 
+- name: Get DB Hostvars
+  set_fact:
+    db_host: "{{ hostvars[groups[rds_db_instance][0]] }}"
+
+- name: Set DB URL
+  set_fact:
+    db_url: "{{ db_host.ec2_engine }}://{{ db_host.ec2_master_username }}:{{ db_password }}@{{ db_host.ec2__address }}:{{ db_host.ec2__port }}/{{ db_host.ec2_DBName }}"
+
+- name: Generate user .profile with app secrets
+  template: src=user_profile.j2 dest={{ user_home }}/.profile owner={{ app_user }} group={{ app_user }} mode=0644
+
 - name: Create application virtual environment
   command: "/usr/bin/virtualenv --python=/usr/bin/python3 {{ virtualenv_root }} creates={{ virtualenv_root }}"
