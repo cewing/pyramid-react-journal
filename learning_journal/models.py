@@ -83,10 +83,12 @@ class User(Base):
         return session.query(cls).get(id)
 
     @classmethod
-    def create(cls, display_name, username, session=None):
+    def create(cls, display_name, username, course_id, session=None):
         if session is None:
             session = DBSession
-        new_user = cls(display_name=display_name, username=username)
+        new_user = cls(
+            display_name=display_name, username=username, course_id=course_id
+        )
         session.add(new_user)
         return new_user
 

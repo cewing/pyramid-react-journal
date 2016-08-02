@@ -178,7 +178,8 @@ def login_complete_view(context, request):
         try:
             user = User.by_username(username)
         except NoResultFound:
-            user = User.create(display_name, username)
+            course_id = request.approved[username.lower()]
+            user = User.create(display_name, username, course_id)
             msg = "You have been added to the site.  Welcome!"
             level = 'success'
         except MultipleResultsFound:
