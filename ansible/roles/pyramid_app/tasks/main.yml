@@ -2,6 +2,9 @@
 
 - name: Clone application repository
   git: repo={{ app_repo }} version={{ app_version }} dest={{ git_repo_root }} force=yes
+  register: git_checkout
+  changed_when: "git_checkout.after|default('after') != git_checkout.before|default('before')"
+  notify: restart supervisor
 
 - name: Install application Python requirements
   pip: state=present requirements={{ git_repo_root }}/requirements.pip virtualenv={{ virtualenv_root }}
