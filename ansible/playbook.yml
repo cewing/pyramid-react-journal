@@ -6,13 +6,15 @@
   gather_facts: yes
 
   roles:
+    - role: common
+    - role: pyramid_app
     - role: nginx
       sudo: yes
       nginx_sites:
         default:
           - listen 80
           - server_name "{{ app_domain_name }}"
-          - access_log "/var/log/nginx/{{app_name}}.log"
+          - access_log "/var/log/nginx/{{ app_name }}.log"
           - return 301 https://$server_name$request_uri
         secure:
           - listen 443
@@ -38,7 +40,3 @@
                 root {{app_root}};
             }
 
-  tasks:
-
-    - debug: var=hostvars
-    - debug: var=foo
