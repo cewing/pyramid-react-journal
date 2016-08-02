@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import json
+from logging import getLogger
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.response import Response
 from pyramid.security import remember, forget
@@ -16,6 +17,9 @@ from .models import (
     User,
     Entry
     )
+
+
+logger = getLogger(__name__)
 
 
 # Basic applicaion views
@@ -181,6 +185,7 @@ def login_complete_view(context, request):
             msg = 'Unable to identify a unique registered user'
             level = 'danger'
     else:
+        logger.warn("Approved Users: {}".format(request.approved))
         msg = ("You are not an approved member of this site. If you believe "
                "this is an error, please contact your instructor or TA for "
                "assistance")
