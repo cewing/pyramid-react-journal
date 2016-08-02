@@ -84,3 +84,5 @@ node_modules/
 secrets*
 
 aws_RDS_instance_details.txt
+
+ansible/roles/nginx

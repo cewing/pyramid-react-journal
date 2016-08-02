@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+[program:lj]
+autorestart=true
+user={{ app_user }}
+command={{ virtualenv_root }}/bin/pserve {{ git_repo_root }}/production.ini
+process_name=%(program_name)s-%(process_num)01d
+numprocs=1
+numprocs_start=0
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/%(program_name)s-%(process_num)01d.log
+environment=DATABASE_URL="{{ db_url }}",LJ_GITHUB_PERSONAL_ACCESS_TOKEN="{{ github_api_token }}",LJ_GITHUB_KEY="{{ github_api_key }}",LJ_GITHUB_SECRET="{{ github_api_secret }}"
