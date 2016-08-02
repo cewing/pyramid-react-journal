@@ -1,0 +1,14 @@
+---
+
+- name: Install system packages (debian/ubuntu)
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_items: "{{ apt_packages }}"
+
+- name: Create group for application user
+  group: name={{ app_user }}
+
+- name: Create application user
+  user: name={{ app_user }} group={{ app_user }}
+
+- name: Create application virtual environment
+  command: "/usr/bin/virtualenv --python=/usr/bin/python3 {{ virtualenv_root }} creates={{ virtualenv_root }}"
