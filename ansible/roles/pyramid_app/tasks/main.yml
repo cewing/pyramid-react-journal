@@ -1,0 +1,28 @@
+---
+
+- name: Clone application repository
+  git: repo={{ app_repo }} version={{ app_version }} dest={{ git_repo_root }} force=yes
+
+- name: Install application Python requirements
+  pip: state=present requirements={{ git_repo_root }}/requirements.pip virtualenv={{ virtualenv_root }}
+
+- name: Install application code
+  pip: state=present name='.' chdir={{ git_repo_root }} virtualenv={{ virtualenv_root }} extra_args='-e'
+
+- name: Change ownership of application code
+  file: name={{ git_repo_root }} owner={{ app_user }} recurse=yes
+
+- name: Get DB Hostvars
+  set_fact:
+    db_host: "{{ hostvars[groups[rds_db_instance][0]] }}"
+
+- name: Set DB URL
+  set_fact:
+    db_url: "{{ db_host.ec2_engine }}://{{ db_host.ec2_master_username }}:{{ db_password }}@{{ db_host.ec2__address }}:{{ db_host.ec2__port }}/{{ db_host.ec2_DBName }}"
+
+- name: view db url
+  debug: var=db_url
+
+- name: Build application supervisor configuration
+  template: src=app_config.j2 dest=/etc/supervisor/conf.d/{{ app_name|lower|replace(' ', '_') }}.conf
+  notify: restart supervisor
