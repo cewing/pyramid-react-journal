@@ -25,6 +25,7 @@ def usage(argv):
 
 
 def main(argv=sys.argv):
+    """foo"""
     if len(argv) < 2:
         usage(argv)
     config_uri = argv[1]
