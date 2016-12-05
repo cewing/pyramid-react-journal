@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 python setup.py develop
-initialize_db production.ini
+# initialize_db production.ini
 python runapp.py
