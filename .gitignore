@@ -85,4 +85,6 @@ secrets*
 
 aws_RDS_instance_details.txt
 
-ansible/roles/nginx
+ansible
+ansible/*
+pyvenv.cfg
