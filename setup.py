@@ -14,6 +14,8 @@ requires = [
     'pyramid',
     'pyramid_exclog',
     'pyramid_jinja2',
+    'ipython',
+    'pyramid_ipython',
     'paginate_sqlalchemy',
     'pyramid_tm',
     'SQLAlchemy',
@@ -23,20 +25,21 @@ requires = [
     'wtforms',
     'velruse',
     'markdown',
-    ]
+    'psycopg2'
+]
 
 setup(name='learning-journal',
       version='0.1',
       description='A Group Learning Journal built with Pyramid and React.js',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
-        "Programming Language :: Python",
-        "Framework :: Pyramid",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-        ],
-      author='Cris Ewing',
-      author_email='cris@crisewing.com',
+          "Programming Language :: Python",
+          "Framework :: Pyramid",
+          "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+      ],
+      author='Cris Ewing, Nicholas Hunt-Walker',
+      author_email='cris@crisewing.com, nhuntwalker@gmail.com',
       url='',
       keywords='web wsgi bfg pylons pyramid',
       packages=find_packages(),
